@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../site.config.mjs';
+
+// ── Content the subagent fills in per product ──────────────────
+const features = [
+  {
+    title: 'Automated market & competitor research',
+    body: 'Idea Validator scans the market, maps existing competitors and gathers real demand signals so you skip weeks of manual research.',
+  },
+  {
+    title: 'Weighted score across viability, moat and timing',
+    body: 'Get a single, defensible score that weighs commercial viability, your potential moat and whether the timing is right for launch.',
+  },
+  {
+    title: 'Cited evidence for every claim',
+    body: 'No hand-waving. Each finding links back to the source, so you can verify the research and trust the score.',
+  },
+  {
+    title: 'Red flags and risks surfaced',
+    body: 'We flag saturated markets, weak demand and hidden risks early — before you spend months building the wrong thing.',
+  },
+  {
+    title: 'Suggested pivots and adjacent opportunities',
+    body: 'When an idea is shaky, Idea Validator points you toward stronger pivots and adjacent opportunities worth exploring.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is Idea Validator?',
+    a: 'Idea Validator is an AI-powered startup idea validator. You paste your business idea and it researches the market, competitors and demand signals, then scores your idea on viability, differentiation and timing — with cited sources for every claim.',
+  },
+  {
+    q: 'How does the scoring work?',
+    a: 'Your idea is evaluated across three weighted dimensions — commercial viability, defensibility (moat) and market timing. Each dimension is backed by cited evidence, and the results combine into a single, honest score that tells you whether your startup idea is good enough to pursue.',
+  },
+  {
+    q: 'Where does the research data come from?',
+    a: 'The market research AI pulls from public web sources, competitor listings and real demand signals. Every claim in your report links to the source it came from, so you can validate the business idea for yourself instead of taking our word for it.',
+  },
+  {
+    q: 'Is it free?',
+    a: 'Idea Validator is free to start — paste your first idea and get a validation score at no cost. Paid plans for deeper research and unlimited validations are coming soon.',
+  },
+];
+
+// FAQ structured data for rich results
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<BaseLayout>
+  <script
+    slot="header"
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(faqJsonLd)}
+  />
+  <Header slot="header" />
+
+  <!-- Hero -->
+  <section class="mx-auto max-w-4xl px-6 pb-16 pt-20 text-center">
+    <p class="mb-4 inline-block rounded-full bg-brand-50 px-4 py-1 text-sm font-semibold text-brand-700">
+      {site.organization}
+    </p>
+    <h1 class="text-balance text-5xl font-extrabold tracking-tight sm:text-6xl">
+      {site.tagline}
+    </h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-[var(--muted)]">
+      {site.description}
+    </p>
+    <div class="mt-10 flex justify-center gap-4">
+      <a
+        href="#cta"
+        class="rounded-xl bg-brand-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:bg-brand-700"
+        >Validate my idea</a
+      >
+      <a
+        href="#features"
+        class="rounded-xl border border-[var(--border)] px-7 py-3.5 text-base font-semibold transition hover:bg-[var(--card)]"
+        >See how it works</a
+      >
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="mx-auto max-w-6xl px-6 py-16">
+    <h2 class="text-center text-3xl font-bold tracking-tight">Everything you need</h2>
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        features.map((f) => (
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
+            <h3 class="text-lg font-semibold">{f.title}</h3>
+            <p class="mt-2 text-[var(--muted)]">{f.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="mx-auto max-w-3xl px-6 py-16">
+    <h2 class="text-center text-3xl font-bold tracking-tight">Frequently asked questions</h2>
+    <div class="mt-10 divide-y divide-[var(--border)]">
+      {
+        faqs.map((f) => (
+          <details class="group py-5">
+            <summary class="cursor-pointer list-none text-lg font-semibold">
+              {f.q}
+            </summary>
+            <p class="mt-3 text-[var(--muted)]">{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- CTA / idea pitch -->
+  <section id="cta" class="mx-auto max-w-3xl px-6 py-20 text-center">
+    <div class="rounded-3xl border border-[var(--border)] bg-brand-600 px-8 py-14 text-white">
+      <h2 class="text-3xl font-bold">Validate your startup idea now</h2>
+      <p class="mx-auto mt-3 max-w-md text-brand-100">
+        Paste your idea and get a brutally honest market score in 60 seconds. It's free to start.
+      </p>
+      <!-- TODO: action will POST to a Vercel endpoint once the backend is live -->
+      <form
+        class="mx-auto mt-8 flex max-w-xl flex-col gap-3 text-left"
+        action="#"
+        method="post"
+        data-validate
+      >
+        <label for="idea" class="text-sm font-semibold text-brand-100">
+          Your startup idea
+        </label>
+        <textarea
+          id="idea"
+          name="idea"
+          required
+          rows="4"
+          placeholder="e.g. An AI tool that turns customer support tickets into a prioritized product roadmap for B2B SaaS teams."
+          class="w-full rounded-lg px-4 py-3 text-[var(--fg)]"
+        ></textarea>
+        <button
+          type="submit"
+          class="whitespace-nowrap rounded-lg bg-white px-6 py-3 font-semibold text-brand-700 transition hover:bg-brand-50"
+          >Validate my idea</button
+        >
+      </form>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
